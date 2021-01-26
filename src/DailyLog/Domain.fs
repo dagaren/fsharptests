@@ -7,24 +7,18 @@ type Date =
  | Yesterday
  | Today
 
-type AddWordCommand = AddWordCommand of word:string
-type RemoveWordCommand = RemoveWordCommand of word:string
 type SetCurrentDateCommand = SetCurrentDateCommand of Date
 
 type Command =
  | SetCurrentDate of SetCurrentDateCommand
  | GetCurrentDate
- | AddWord of AddWordCommand
- | RemoveWord of RemoveWordCommand
  | Exit
 
 type AppState = {
     selectedDate: DateTime option
-    words: string list
 }
 
 let initialState = {
-    words = []
     selectedDate = None
 }
 

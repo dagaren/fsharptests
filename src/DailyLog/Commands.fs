@@ -8,18 +8,6 @@ let isNotExitCommand command =
      | Exit -> false
      | _ -> true 
 
-let executeAddWordCommand state (AddWordCommand word) = 
-    let newWords = word :: state.words
-    let newState = {state with words = newWords }
-    sendOutput (sprintf "%A" newState.words)
-    newState
-
-let executeRemoveWordCommand state (RemoveWordCommand word) =
-    let newWords = state.words |> List.filter (fun x -> x <> word)
-    let newState = {state with words = newWords}
-    sendOutput (sprintf "%A" newState.words)
-    newState
-
 let executeSetCurrentDateCommand state (SetCurrentDateCommand date) =
     sendOutput (sprintf "Set current date %A" date)
     let dateTime = dateToDateTime date
@@ -34,8 +22,6 @@ let executeGetCurrentDateCommand state =
 
 let handleCommand state command = 
     let newState = match command with
-                    | AddWord command -> executeAddWordCommand state command
-                    | RemoveWord command -> executeRemoveWordCommand state command
                     | SetCurrentDate command -> executeSetCurrentDateCommand state command
                     | GetCurrentDate -> executeGetCurrentDateCommand state
                     | Exit -> sendOutput "exit"; state
