@@ -1,23 +1,38 @@
 module Parsing
 
 open FParsec
-open Domain
+open Commands
 
 let pDate = 
     (stringCIReturn "today" Today) <|> 
     (stringCIReturn "yesterday" Yesterday) <|>
-    (pipe3 (pint32 .>> skipString "/") (pint32 .>> skipString "/") (pint32) (fun x y z -> Date (x, y, z)))
+    (pipe3 (pint32 .>> skipString "/") (pint32 .>> skipString "/") (pint32) (fun x y z -> Date { year = x; month = y; day = z }))
 
 let pSetCurrentDateCommand = 
-    skipStringCI "SetCurrentDate" >>. spaces >>. pDate |>> SetCurrentDateCommand |>> SetCurrentDate .>> eof
+    skipStringCI "date" >>. spaces >>. pDate |>> SetCurrentDateCommand |>> SetCurrentDate .>> eof
 
 let pGetCurrentDateCommand =
-    stringCIReturn "GetCurrentDate" GetCurrentDate
+    stringCIReturn "date" GetCurrentDate .>> eof
+
+let pExit = 
+    stringCIReturn "exit" Exit .>> eof
+
+let pShowLogs = 
+    stringCIReturn "logs" ShowLogs .>> eof
+
+let pString: Parser<string, unit> = many1CharsTill anyChar eof
+
+let pAddLog =
+    skipStringCI "log" >>. spaces >>. pString |>> AddLogCommand |>> AddLog .>> eof 
 
 let pcommand = 
-    (stringCIReturn "exit" Exit) <|>
-    pSetCurrentDateCommand <|>
-    pGetCurrentDateCommand
+    choice [
+      attempt pExit
+      attempt pGetCurrentDateCommand
+      attempt pSetCurrentDateCommand
+      attempt pShowLogs
+      attempt pAddLog
+    ]
 
 let parseCommand text =
     let r = run pcommand text

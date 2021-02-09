@@ -20,8 +20,8 @@ let main argv =
     readCommandsSeq
      |> Seq.map parseCommand
      |> Seq.choose filterValidCommand
-     |> Seq.takeWhile isNotExitCommand
-     |> Seq.fold handleCommand Domain.initialState
+     |> Seq.takeWhile (not << isExitCommand)
+     |> Seq.fold handleCommand Commands.initialState
      |> ignore
 
     printfn "-- Normal termination of the program --"

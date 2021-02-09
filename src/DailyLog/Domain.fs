@@ -2,28 +2,18 @@ module Domain
 
 open System
 
-type Date = 
- | Date of year:int * month:int * day:int
- | Yesterday
- | Today
+type LogEntry = LogEntry of text:string
 
-type SetCurrentDateCommand = SetCurrentDateCommand of Date
-
-type Command =
- | SetCurrentDate of SetCurrentDateCommand
- | GetCurrentDate
- | Exit
-
-type AppState = {
-    selectedDate: DateTime option
+type Date = {
+    year: int
+    month: int
+    day: int
 }
 
-let initialState = {
-    selectedDate = None
+type DailyLog = {
+    date: Date
+    entry: LogEntry
 }
 
-let dateToDateTime (date:Date) =
-    match date with
-     | Date (year, month, day) -> DateTime(year, month, day)
-     | Yesterday -> DateTime.UtcNow.AddDays(-1.0)
-     | Today -> DateTime.UtcNow
+let dateToString date = 
+    sprintf "%s %s %s" (date.year.ToString()) (date.month.ToString()) (date.day.ToString())
